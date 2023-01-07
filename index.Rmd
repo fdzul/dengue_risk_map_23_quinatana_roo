@@ -1,0 +1,258 @@
+---
+title: "Programa de Prevención y Control del Dengue de Quintana Roo"
+output: 
+  flexdashboard::flex_dashboard:
+      theme: united
+      social: ["twitter", "facebook", "menu", "github"]
+output_dir: libs      
+---
+
+```{r setup}
+
+# Step 1. load the library ####
+options(shiny.maxRequestSize=30*1024^2)
+library(formattable)
+library(tmap)
+library(rmarkdown)
+library(knitr)
+library(shiny)
+library(flexdashboard)
+library(plotly)
+library(boldenr)
+library(magrittr)
+library(leaflet)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(dash)
+library(ECharts2Shiny)
+library(sf)
+
+# Step 3. load the functions ####
+if(as.vector(Sys.info()["sysname"]) == "Darwin"){
+    
+    # 1.6 hotspots cases
+    source("~/Dropbox/r_developments/r_new_functions/3.Functions/risk_agebs.R")
+    
+    source("~/Dropbox/r_developments/r_new_functions/3.Functions/risk_map.R")
+    
+    source("~/Dropbox/r_developments/r_new_functions/3.Functions/hotspots_map.R")
+    
+    # 1. 7 eggs hotspots ####
+    
+    source("~/Dropbox/r_developments/r_dashboards/github_pages/test_denv_dash_oax/3.Functions/eggs_hotspots_intensity_map_year.R")
+
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Windows"){
+    # 1.1. dengue dataset
+    
+    # 1.5 ulv dataset
+    
+    # 1.6 hotspots
+
+
+    #Step  load the risk_ageb function ###
+    source('C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_dashboard/3.Functions/risk_agebs.R')
+
+    # Step  load the risk_map function ####
+    source("D:/OneDrive/proyects/hotspots/3.Functions/risk_map.R")
+
+    # Step  load the hotspots map ####
+    source("C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_dashboard/3.Functions/hotspots_map.R")
+    
+    # 1. 7 eggs hotspots ####
+    source("C:/Users/HOME/Dropbox/r_developments/r_dashboards/github_pages/test_denv_dash_oax/3.Functions/eggs_hotspots_intensity_map_year.R")
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Linux"){
+    
+}
+
+
+
+# Step 5. Load the RData files ####
+if(as.vector(Sys.info()["sysname"]) == "Darwin"){
+    # load the blocks
+    load("~/OneDrive/automatic_read_ine_2010/8.RData/block_ine10_mx.RData")
+    
+    # load the dengue cases hotspots
+    load("~/Dropbox/hotspots_2021/8.RData/cases_hotspots_agebs19.RData")
+    hotspots <- cases_hotspots_agebs19 |>
+    sf::st_make_valid()
+    
+    # load the vector hotspots
+    load("~/OneDrive/proyects/hotspots_eggs/8.RData/31_yucatan/betas/31_yucatan_zinb1_betas.RData")
+    
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Windows"){
+    
+    # load the blocks #####
+    load("D:/OneDrive/automatic_read_ine_2010/8.RData/block_ine10_mx.RData") 
+    
+    # Step 1. load the hotspots dengue cases ####
+   load("E:/backup/Dropbox_respaldo_2023_01_03/hotspots_2022/8.RData/cases_hotspots_agebs19.RData")
+    
+    cases_hotspots_agebs19 <- cases_hotspots_agebs19 |>
+    sf::st_make_valid()
+
+    
+    
+    # load the vector hotspots
+    load("D:/OneDrive/proyects/hotspots_eggs/8.RData/23_quintana_roo/betas/23_quintana_roo_zinb1_betas.RData")
+    
+} else if(as.vector(Sys.info()["sysname"]) == "Linux"){
+    
+}
+
+
+```
+
+# **Hotspots de la Transmisión de Dengue**
+
+## Column {.tabset}
+
+### [**Cancun**]{style="color:#990000"}
+
+```{r, hotspots_dengue_cancun, echo=FALSE}
+hotspots_map(cve_ent = "23",
+             locality = "Cancun",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+
+### [**Chetumal**]{style="color:#990000"}
+
+```{r, hotspots_dengue_chetumal, echo=FALSE}
+hotspots_map(cve_ent = "23",
+             locality = "Chetumal",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+
+### [**Cozumel**]{style="color:#990000"}
+
+```{r, hotspots_dengue_cozumel, echo=FALSE}
+hotspots_map(cve_ent = "23",
+             locality = "Cozumel",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+### [**Felipe Carrillo Puerto**]{style="color:#990000"}
+
+```{r, hotspots_dengue_carrillo_puerto, echo=FALSE}
+hotspots_map(cve_ent = "23",
+             locality = "Felipe Carrillo Puerto",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+### [**Playa del Carmen**]{style="color:#990000"}
+
+```{r, hotspots_dengue_playa_carmen, echo=FALSE}
+hotspots_map(cve_ent = "23",
+             locality = "Playa del Carmen",
+             hotspots = cases_hotspots_agebs19,
+             static_map = FALSE)
+
+```
+
+# **Hotspots del vector de Dengue**
+
+## Column {.tabset}
+
+### [**Cancun**]{style="color:#990000"}
+
+```{r vector_hotspots_cancun, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_23_quintana_roo,
+                                 locality = "Cancun",
+                                 cve_ent = "23",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+
+### [**Chetumal**]{style="color:#990000"}
+
+```{r vector_hotspots_chetumal, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_23_quintana_roo,
+                                 locality = "Chetumal",
+                                 cve_ent = "23",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+### [**Cozumel**]{style="color:#990000"}
+
+```{r vector_hotspots_cozumel, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_23_quintana_roo,
+                                 locality = "Cozumel",
+                                 cve_ent = "23",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+
+### [**Playa del Carmen**]{style="color:#990000"}
+
+```{r vector_hotspots_playa_carmen, dpi = 300, warning=FALSE, message=FALSE}
+eggs_hotspots_intensity_map_year(betas = betas_23_quintana_roo,
+                                 locality = "Playa del Carmen",
+                                 cve_ent = "23",
+                                 palette = rcartocolor::carto_pal,
+                                 name = "SunsetDark")
+```
+
+# **Dengue Risk Maps**
+
+## Column {.tabset}
+
+### [**Cancun**]{style="color:#7d9029"}
+
+```{r, risk_map_cancun, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_23_quintana_roo,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Cancun",
+                          cve_ent = "23",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
+
+
+### [**Chetumal**]{style="color:#7d9029"}
+
+```{r, risk_map_chetumal, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_23_quintana_roo,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Chetumal",
+                          cve_ent = "23",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
+
+### [**Cozumel**]{style="color:#7d9029"}
+
+```{r, risk_map_cozumel, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_23_quintana_roo,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Cozumel",
+                          cve_ent = "23",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
+
+### [**Playa del Carmen**]{style="color:#7d9029"}
+
+```{r, risk_map_del_carmen, echo=FALSE}
+risk <- risk_agebs(spde_model = betas_23_quintana_roo,
+                          hotspots = cases_hotspots_agebs19,
+                          locality = "Playa del Carmen",
+                          cve_ent = "23",
+                          intensity_perc = 25)
+risk_map(risk = risk, staticmap = FALSE)
+```
